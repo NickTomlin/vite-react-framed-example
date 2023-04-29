@@ -6,8 +6,6 @@ import './index.css'
 function Wrapper () {
     const [stateProps, setStateProps] = useState({ name: "bob"})
     // store a dynamically loaded react component in state
-    const [FrameApp, setFrameApp] = useState(null)
-
     console.log(stateProps)
     React.useEffect(() => {
         // store props in state pass to FrameApp
