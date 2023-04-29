@@ -1,31 +1,9 @@
-import React, {useState} from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom/client'
-import FrameApp from './FrameApp.jsx'
-import './index.css'
 
+// what we wnat to do is have the frame loaded in a srcDoc but still be able to talk to the bundle...
 function Wrapper () {
-    const [stateProps, setStateProps] = useState({ name: "bob"})
-    // store a dynamically loaded react component in state
-    console.log(stateProps)
-    React.useEffect(() => {
-        // store props in state pass to FrameApp
-        const listener = (event) => {
-            console.log('message received', event.data)
-            if (event.data.type === 'reload') {
-                window.location.reload()
-            }
-            if (event.data.type === 'update') {
-                setStateProps(prev => {
-                    return ({...prev, ...event.data.props});
-                })
-            }
-        }
-        window.addEventListener('message', listener)
-        return () => {
-            window.removeEventListener('message', listener)
-        }
-    })
-    return <FrameApp {...stateProps} />
+    return <div>HI from frame!!</div>
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
