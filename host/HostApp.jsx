@@ -10,9 +10,11 @@ function HostApp () {
         setMessages((messages) => [...messages, JSON.stringify(e.data)])
 
         if (e.data.type === "route") {
-            // push location and search to history
-
-            window.history.pushState({}, '', e.data.location.pathname + e.data.location.search)
+            if (!e.data.location.includes("bad")) {
+                setMessages((messages) => [...messages, `BAD STATE ${e.data.location}`])
+            } else {
+                window.history.pushState({}, '', e.data.location.pathname + e.data.location.search)
+            }
         }
         console.log('host message', e.data)
     }, [setMessages])

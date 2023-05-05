@@ -34,13 +34,27 @@ function Wrapper () {
             path: '/',
             element: <div>
                 <h1>Home</h1>
-                <Link to={"/example"}>Example</Link>
+                <ul>
+                    <li>
+                        <Link to={"/example"}>Example</Link>
+                    </li>
+                    <li>
+                        <Link to={"/bad"}>Bad</Link>
+                    </li>
+                </ul>
             </div>
         },
         {
             path: '/example',
             element: <div>
                 <h1>Example</h1>
+                <Link to={"/"}>Home</Link>
+            </div>
+        },
+        {
+            path: '/bad',
+            element: <div>
+                <h1>Bad page (should not be in parent url)</h1>
                 <Link to={"/"}>Home</Link>
             </div>
         }
@@ -72,12 +86,22 @@ function Wrapper () {
         });
     }, [])
 
+    const onLocationChange = () => {
+        window.location.href = "http://www.google.com"
+    }
+
     return <>
         <h1>Inside Frame</h1>
+        <div style={{ display: "flex"}}>
+            <a href={"https://www.google.com"} target={"_blank"}>Google (requires `allow-popups`)</a>
+            <button onClick={onDownload}>Download</button>
+            <button onClick={onLocationChange}>Try to change to another location (should not work)</button>
+        </div>
         <RouterProvider router={router} />
-        <button onClick={onDownload}>Download</button>
-        <a href={"https://www.google.com"} target={"_blank"}>Google (requires `allow-popups`)</a>
-        <pre><code>{JSON.stringify(messages, null, 2)}</code></pre>
+        <div>
+            <h2>Messages</h2>
+            <pre><code>{JSON.stringify(messages, null, 2)}</code></pre>
+        </div>
     </>
 }
 
