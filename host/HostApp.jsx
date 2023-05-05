@@ -42,13 +42,22 @@ function HostApp () {
         }, '*')
     }, [frameRef.current])
 
+    const sandboxAttributes = [
+        // for any JS in the iframe
+        "allow-scripts",
+        // allow opening external links
+        "allow-popups",
+        // allow us to trigger download handlers
+        "allow-downloads",
+    ].join(" ")
+
 
     return (
         <>
             <h1>Host</h1>
             <button onClick={clickHandler}>send message to frame</button>
             {JSON.stringify(messages, null, 2)}
-            <iframe sandbox={"allow-scripts"} onLoad={onLoad} ref={frameRef} style={{ height:"100vh", width: "100vw"}}  src={"/frame.html"} />
+            <iframe sandbox={sandboxAttributes} onLoad={onLoad} ref={frameRef} style={{ height:"100vh", width: "100vw"}}  src={"/frame.html"} />
         </>
     )
 }

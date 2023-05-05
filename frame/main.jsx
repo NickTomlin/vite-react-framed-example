@@ -60,9 +60,23 @@ function Wrapper () {
         }, '*');
     });
 
+    // requires `allow-downloads` in sandbox
+    const onDownload = useCallback(() => {
+        const blob = new Blob(['hi'], {type: 'text/plain'})
+        const link = document.createElement("a");
+        link.download = name;
+        link.rel = "noopener";
+        link.href = URL.createObjectURL(blob.slice(0, blob.size));
+        setTimeout(() => {
+            link.dispatchEvent(new MouseEvent("click"));
+        });
+    }, [])
+
     return <>
         <h1>Inside Frame</h1>
         <RouterProvider router={router} />
+        <button onClick={onDownload}>Download</button>
+        <a href={"https://www.google.com"} target={"_blank"}>Google (requires `allow-popups`)</a>
         <pre><code>{JSON.stringify(messages, null, 2)}</code></pre>
     </>
 }
