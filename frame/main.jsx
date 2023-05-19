@@ -4,15 +4,20 @@ import {createMemoryRouter, Link, RouterProvider} from "react-router-dom";
 import {FRAME_SOURCE, HOST_SOURCE, TYPES} from "../shared.js";
 
 
-// what we wnat to do is have the frame loaded in a srcDoc but still be able to talk to the bundle...
+const MESSAGE_HOST = new URLSearchParams(window.location.search).get("hostOrigin")
+
+if (!MESSAGE_HOST) {
+   throw new Error("No message host provided by parent. Exploding 💣")
+}
+
+// what we want to do is have the frame loaded in a srcDoc but still be able to talk to the bundle...
 function Wrapper () {
     const [messages, setMessages] = useState([])
     useEffect(() => {
-        console.log('hi')
         window.parent.postMessage({
             source: FRAME_SOURCE,
             message: "frame initialized"
-        }, 'http://localhost:5173') // we need this because we can't access `parent`
+        }, MESSAGE_HOST) // we need this because we can't access `parent`
     }, [])
 
     const handleHostMessage = useCallback((e) => {
@@ -71,7 +76,7 @@ function Wrapper () {
                 pathname: location.pathname,
                 search: location.search,
             },
-        }, '*');
+        }, MESSAGE_HOST);
     });
 
     // requires `allow-downloads` in sandbox

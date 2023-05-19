@@ -8,15 +8,16 @@ function HostApp () {
     const listeners = useCallback((e) => {
         if (e.data.source !== FRAME_SOURCE) { return }
         setMessages((messages) => [...messages, JSON.stringify(e.data)])
+        console.log('host message', e.data)
 
         if (e.data.type === "route") {
-            if (!e.data.location.includes("bad")) {
-                setMessages((messages) => [...messages, `BAD STATE ${e.data.location}`])
+            console.log(e.data)
+            if (/bad/.test(e.data.location.pathname)) {
+                setMessages((messages) => [...messages, `BAD STATE ${e.data.location.pathname}`])
             } else {
                 window.history.pushState({}, '', e.data.location.pathname + e.data.location.search)
             }
         }
-        console.log('host message', e.data)
     }, [setMessages])
 
     useEffect(() => {
@@ -32,7 +33,7 @@ function HostApp () {
         currentFrame.contentWindow.postMessage({
             source: HOST_SOURCE,
             message: 'init' + new Date().toISOString()
-        }, '*') // TODO: this is necessary...
+        }, '*') // `null` origin of sandboxed frame necessitates this since the origin of the frame is `null`
     }, [frameRef])
 
     const clickHandler = useCallback(() => {
@@ -41,8 +42,8 @@ function HostApp () {
         currentFrame.contentWindow.postMessage({
             source: HOST_SOURCE,
             message: 'click!' + new Date().toISOString()
-        }, '*')
-    }, [frameRef.current])
+        }, '*') // `null` origin of sandboxed frame necessitates this since the origin of the frame is `null`
+    }, [frameRef])
 
     const sandboxAttributes = [
         // for any JS in the iframe
@@ -54,12 +55,14 @@ function HostApp () {
     ].join(" ")
 
 
+    const hostOrigin = window.location.origin
+
     return (
         <>
             <h1>Host</h1>
             <button onClick={clickHandler}>send message to frame</button>
             {JSON.stringify(messages, null, 2)}
-            <iframe sandbox={sandboxAttributes} onLoad={onLoad} ref={frameRef} style={{ height:"100vh", width: "100vw"}}  src={"/frame.html"} />
+            <iframe sandbox={sandboxAttributes} onLoad={onLoad} ref={frameRef} style={{ height:"100vh", width: "100vw"}}  src={`/frame.html?hostOrigin=${hostOrigin}`} />
         </>
     )
 }
